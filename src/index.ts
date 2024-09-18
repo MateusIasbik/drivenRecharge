@@ -1,6 +1,9 @@
-function somar(n1: number, n2: number) {
-    return n1 + n2;
-}
+import express, { Request, Response } from "express";
 
-console.log(somar(2, 3));
-console.log(somar(3, 5));
+const app = express();
+
+app.get("/health", (req: Request, res: Response) => {
+    res.sendStatus(200);
+});
+
+app.listen(5000, () => console.log("Server is up."));
