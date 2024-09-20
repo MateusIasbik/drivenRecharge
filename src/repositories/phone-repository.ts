@@ -1,4 +1,4 @@
-import { Phone, PhoneData } from "../protocols";
+import { PhoneData } from "../protocols";
 import db from "../database";
 
 export async function insertPhone(phoneData: PhoneData) {
@@ -15,7 +15,7 @@ export async function insertPhone(phoneData: PhoneData) {
     // Insere cada telefone na tabela
     const insertedPhones = []; // Array para armazenar telefones inseridos
     for (const phoneNumber of phone) { // Itera sobre cada número de telefone
-        const result = await db.query<Phone>(`
+        const result = await db.query<PhoneData>(`
             INSERT INTO phones (client_id, phone_number, carrier_id, name, description) 
             VALUES ($1, $2, $3, $4, $5)
             RETURNING *
@@ -44,7 +44,6 @@ async function getOrCreateClient(cpf: string) {
     }
 }
 
-
 async function selectCarrier(carrierName: string) {
     const result = await db.query(`
         SELECT id FROM carriers WHERE name = $1
@@ -55,5 +54,13 @@ async function selectCarrier(carrierName: string) {
     } else {
         return null; // Retorna null se não encontrar a operadora
     }
+}
+
+export async function getNewPhones(phoneData: PhoneData) {
+    const result = await db.query<PhoneData>(`
+            SELECT * FROM phones;
+        `);
+
+    return result.rows;
 }
 

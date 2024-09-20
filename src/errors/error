@@ -1,0 +1,27 @@
+export default function conflictError(entity) {
+    return {
+        type: "conflict",
+        message: `Esse ${entity} já foi cadastrado!`
+    }
+}
+
+export default function invalidStockError() {
+    return {
+        type: "invalidStock",
+        message: "Não há disponibilidade em estoque."
+    };
+}
+
+export default function invalidError(entity) {
+    return {
+        type: "invalidId",
+        message: `${entity} não existe!`
+    };
+}
+
+export default function rentNotFinalizedError() {
+    return {
+        type: "RentNotFinalized",
+        message: "O aluguel ainda não foi finalizado!"
+    };
+}
