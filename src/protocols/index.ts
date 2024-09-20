@@ -1,6 +1,14 @@
 export type PhoneData = {
     phone: string[],
-    operator: string,
+    carrier: string,
     fullname: string,
-    description: string 
+    description: string,
+    cpf: string
 };
+
+export type Phone = {
+    id: number;
+    phone: string[];
+    fullname: string,
+    description: string
+}
