@@ -1,24 +1,26 @@
-import { Phone, PhoneData } from "../protocols";
+import { PhoneData } from "../protocols";
 import db from "../database";
 
 export async function insertClient(phoneData: PhoneData) {
     const { cpf } = phoneData;
 
-    const result = await db.query<Phone>(`
+    const result = await db.query<PhoneData>(`
         INSERT INTO clients (cpf) 
         VALUES ($1)
     `, [cpf]);
-    
-    return result.rows[0]; 
+
+    return result.rows[0];
 }
 
 export async function getClient() {
     const result = await db.query(`
-        SELECT c.id, c.cpf, ARRAY_AGG(p.phone_number) AS telefones
-        FROM clients c
-        LEFT JOIN phones p ON c.id = p.client_id
-        GROUP BY c.id, c.cpf
+        SELECT clients.id, clients.cpf, ARRAY_AGG(phones.phone_number) AS telefones
+        FROM clients
+        LEFT JOIN phones ON clients.id = phones.client_id
+        GROUP BY clients.id, clients.cpf
     `);
+
+    console.log(result.rows);
 
     return result.rows.map(row => ({
         id: row.id,

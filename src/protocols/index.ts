@@ -6,9 +6,7 @@ export type PhoneData = {
     cpf: string
 };
 
-export type Phone = {
-    id: number;
-    phone: string[];
-    fullname: string,
-    description: string
+export type RechargeData = {
+    amount: number,
+    phone_id: string
 }

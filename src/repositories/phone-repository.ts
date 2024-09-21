@@ -1,4 +1,4 @@
-import { Phone, PhoneData } from "../protocols";
+import { PhoneData } from "../protocols";
 import db from "../database";
 import { invalidError } from "../errors/error";
 
@@ -71,7 +71,6 @@ export async function getPhonesByCpf(phoneData: PhoneData) {
             SELECT * FROM phones WHERE client_id = (SELECT id FROM clients WHERE cpf = $1)
         `, [cpf]);
 
-        console.log(result);
     return result.rows;
 }
 
