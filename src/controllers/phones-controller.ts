@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { PhoneData } from "../protocols";
-import { createPhone, getNewPhone } from "../services/phone-services";
+import { createPhone, getAllPhonesByNumber, getNewPhone } from "../services/phone-services";
 import httpStatus from "http-status";
 
 export async function createPhones(req: Request, res: Response, next: NextFunction) {
@@ -22,5 +22,16 @@ export async function getPhones(req: Request, res: Response, next: NextFunction)
         res.status(httpStatus.OK).send(result);
     } catch (err) {
         next(err); // Passa o erro para o middleware de erro
+    }
+}
+
+export async function getPhonesByNumber(req: Request, res: Response, next: NextFunction) {
+    const cpf: string = req.params.documet;
+
+    try {
+        const result = await getAllPhonesByNumber(cpf);
+        res.status(httpStatus.OK).send(result);
+    } catch (err) {
+        next(err);
     }
 }

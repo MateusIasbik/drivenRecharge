@@ -30,6 +30,13 @@ export async function postRecharges(rechargeData: RechargeData) {
     return result.rows[0];
 }
 
+export async function getRechargesByPhoneNumber(numberPhone: string) {
+    const result = await db.query(`
+            SELECT * FROM recharges WHERE phone_id = (SELECT id FROM phones WHERE phone_number = $1)
+        `, [numberPhone]);
+
+    return result.rows;
+}
 
 
 

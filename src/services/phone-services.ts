@@ -3,7 +3,7 @@ import { conflictError } from "../errors/error";
 import { getNewPhones, getPhonesByCpf, insertPhone, phoneExists } from "../repositories/phone-repository";
 
 export async function createPhone(phoneData: PhoneData) {    
-    const numberPhones = await getPhonesByCpf(phoneData);
+    const numberPhones = await getPhonesByCpf(phoneData.cpf);
     
     if (numberPhones.length >= 3) {
         throw conflictError("Telefone");
@@ -21,6 +21,14 @@ export async function createPhone(phoneData: PhoneData) {
 
 export async function getNewPhone(phoneData: PhoneData) {
     const result = await getNewPhones(phoneData);
+
+    return result;
+}
+
+export async function getAllPhonesByNumber(cpf: string) {
+    const result = await getPhonesByCpf(cpf);
+    
+    console.log(result);
 
     return result;
 }

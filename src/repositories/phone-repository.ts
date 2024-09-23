@@ -64,8 +64,7 @@ export async function getNewPhones(phoneData: PhoneData) {
     return result.rows;
 }
 
-export async function getPhonesByCpf(phoneData: PhoneData) {
-    const { cpf } = phoneData;
+export async function getPhonesByCpf(cpf: string) {
 
     const result = await db.query<PhoneData>(`
             SELECT * FROM phones WHERE client_id = (SELECT id FROM clients WHERE cpf = $1)
