@@ -1,17 +1,40 @@
-import { insertClient } from "../repositories/client-repository";
-import { PhoneData } from "../protocols";
+import { getClientIdByCpf, getPhonesByClientId } from "../repositories/phone-repository";
+import { getNewClientByCpf } from "../repositories/client-repository";
+import { getCarrierByCarrierId } from "../repositories/carriers-repository";
+import { string } from "joi";
+import { getRechargesByPhoneNumber } from "../repositories/recharge-repository";
+import { CarrierResponseData } from "../protocols";
 
-// export async function createClient(phoneData: PhoneData) {
-//     const newClient = await insertClient(phoneData);
-//     return newClient;
-// }
+export async function getClientByCpf(cpf: string) {
 
-// export async function createPhone(phoneData: PhoneData) {
-//     const newPhone = await insertPhone(phoneData);
+    const clientId = await getClientIdByCpf(cpf);
 
-//     const existingCpf = await getOrCreateClient(phoneData.cpf);
+    const phones = await getPhonesByClientId(clientId);
+    console.log(phones);
 
-//     if (existingCpf.rows.length >= 0) throw conflictError("CPF");
+    const phonePromises = phones.map(async (phone) => {
+        const carrier = await getCarrierByCarrierId(phone.carrier_id.toString());
 
-//     return newPhone;
-// }
+        console.log(carrier);
+        const recharges = await getRechargesByPhoneNumber(phone.phone_number);
+        console.log(recharges);
+        return {
+            number: phone.phone_number,
+            name: phone.name,
+            description: phone.description,
+            carrier,
+            recharges
+        }
+    })
+
+    const phonesResult = await Promise.all(phonePromises);
+
+
+    const result = {
+        document: cpf,
+        phones: phonesResult
+    }
+
+
+    return result;
+}

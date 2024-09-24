@@ -1,9 +1,12 @@
 import { PhoneData } from "../protocols";
-import { conflictError } from "../errors/error";
-import { getNewPhones, getPhonesByCpf, insertPhone, phoneExists } from "../repositories/phone-repository";
+import { conflictError, invalidError } from "../errors/error";
+import { createClient, getClientIdByCpf, getNewPhones, getPhonesByClientId, insertPhone, phoneExists, selectCarrier } from "../repositories/phone-repository";
 
-export async function createPhone(phoneData: PhoneData) {    
-    const numberPhones = await getPhonesByCpf(phoneData.cpf);
+export async function createPhone(phoneData: PhoneData) {
+    const clientExists = await getClientIdByCpf(phoneData.cpf);
+    if (!clientExists) throw invalidError("Cliente")
+
+    const numberPhones = await getPhonesByClientId(clientExists);
     
     if (numberPhones.length >= 3) {
         throw conflictError("Telefone");
@@ -13,8 +16,16 @@ export async function createPhone(phoneData: PhoneData) {
         const exists = await phoneExists(phoneNumber);
         if (exists) throw conflictError("Telefone");
     }
+
+    const clientId = await createClient(phoneData.cpf);
+
+    // Seleciona o ID da operadora
+    const carrierId = await selectCarrier(phoneData.carrier);
+    if (!carrierId) {
+        throw invalidError("Operadora"); // Lança erro se a operadora não for encontrada
+    }
     
-    const newPhone = await insertPhone(phoneData);
+    const newPhone = await insertPhone(clientId, carrierId, phoneData);
     return newPhone;
 }
 
@@ -26,7 +37,10 @@ export async function getNewPhone(phoneData: PhoneData) {
 }
 
 export async function getAllPhonesByNumber(cpf: string) {
-    const result = await getPhonesByCpf(cpf);
+    const clientId = await getClientIdByCpf(cpf);
+    if (!clientId) throw invalidError("Cliente")
+
+    const result = await getPhonesByClientId(clientId);
     
     console.log(result);
 

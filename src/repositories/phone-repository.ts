@@ -1,17 +1,9 @@
-import { PhoneData } from "../protocols";
+import { PhoneData, PhoneResponseData } from "../protocols";
 import db from "../database";
 import { invalidError } from "../errors/error";
 
-export async function insertPhone(phoneData: PhoneData) {
-    const { phone, carrier, fullname, description, cpf } = phoneData;
-
-    const clientId = await getOrCreateClient(cpf);
-
-    // Seleciona o ID da operadora
-    const carrierId = await selectCarrier(carrier);
-    if (!carrierId) {
-        throw invalidError("Operadora"); // Lança erro se a operadora não for encontrada
-    }
+export async function insertPhone(clientId: string, carrierId: string, phoneData: PhoneData) {
+    const { phone, fullname, description } = phoneData;
 
     // Insere cada telefone na tabela
     const insertedPhones = []; // Array para armazenar telefones inseridos
@@ -27,25 +19,25 @@ export async function insertPhone(phoneData: PhoneData) {
     return insertedPhones; // Retorna todos os telefones inseridos
 }
 
-export async function getOrCreateClient(cpf: string) {
+export async function getClientIdByCpf(cpf: string) {
     const result = await db.query(`
         SELECT id FROM clients WHERE cpf = $1
     `, [cpf]);
 
-    if (result.rows.length > 0) {
-        return result.rows[0].id; // Retorna o id do cliente existente
-    } else {
-        // Se não encontrar, insere um novo cliente
-        const insertResult = await db.query(`
-            INSERT INTO clients (cpf)
-            VALUES ($1)
-            RETURNING id
-        `, [cpf]);
-        return insertResult.rows[0].id; // Retorna o id do novo cliente
-    }
+    return result.rows[0].id; // Retorna o id do cliente existente
 }
 
-async function selectCarrier(carrierName: string) {
+export async function createClient(cpf: string) {
+     // Se não encontrar, insere um novo cliente
+    const insertResult = await db.query(`
+        INSERT INTO clients (cpf)
+        VALUES ($1)
+        RETURNING id
+    `, [cpf]);
+    return insertResult.rows[0].id; // Retorna o id do novo cliente
+}
+
+export async function selectCarrier(carrierName: string) {
     const result = await db.query(`
         SELECT id FROM carriers WHERE name = $1
     `, [carrierName]);
@@ -64,11 +56,11 @@ export async function getNewPhones(phoneData: PhoneData) {
     return result.rows;
 }
 
-export async function getPhonesByCpf(cpf: string) {
+export async function getPhonesByClientId(clientId: string) {
 
-    const result = await db.query<PhoneData>(`
-            SELECT * FROM phones WHERE client_id = (SELECT id FROM clients WHERE cpf = $1)
-        `, [cpf]);
+    const result = await db.query<PhoneResponseData>(`
+            SELECT * FROM phones WHERE client_id = $1
+        `, [clientId]);
 
     return result.rows;
 }

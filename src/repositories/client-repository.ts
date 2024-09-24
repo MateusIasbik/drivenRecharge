@@ -29,3 +29,39 @@ export async function getClient() {
     }));
 }
 
+export async function getNewClientByCpf(cpf: string) {
+    
+    const result = await db.query(`
+        SELECT
+            phones.id AS phone_id,
+            phones.phone_number,
+            phones.name AS phone_name,
+            phones.description AS phone_description,
+            json_build_object(
+                'id', carriers.id,
+                'name', carriers.name,
+                'code', carriers.code
+            ) AS carrier,
+            COALESCE(ARRAY_AGG(
+                json_build_object(
+                    'id', recharges.id,
+                    'amount', recharges.amount,
+                    'created_at', recharges.created_at
+                )
+            ), '{}'::json[]) AS recharges
+        FROM
+            phones
+        INNER JOIN
+            clients ON phones.client_id = clients.id
+        INNER JOIN
+            carriers ON phones.carrier_id = carriers.id
+        LEFT JOIN
+            recharges ON phones.id = recharges.phone_id
+        WHERE
+            clients.cpf = $1
+        GROUP BY
+            phones.id, carriers.id;
+    `, [cpf]);
+
+    return result.rows;
+}

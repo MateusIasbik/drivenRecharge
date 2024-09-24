@@ -4,14 +4,15 @@ import { createPhone, getAllPhonesByNumber, getNewPhone } from "../services/phon
 import httpStatus from "http-status";
 
 export async function createPhones(req: Request, res: Response, next: NextFunction) {
-    const phoneData = req.body as PhoneData;
-    
+    const phoneData: PhoneData = req.body;
     try {
+
         await createPhone(phoneData);
         res.sendStatus(httpStatus.CREATED);
-    } catch (err) {
-        next(err); // Passa o erro para o middleware de erro
+    } catch (error) {
+        next(error);
     }
+
 }
 
 export async function getPhones(req: Request, res: Response, next: NextFunction) {
@@ -26,7 +27,7 @@ export async function getPhones(req: Request, res: Response, next: NextFunction)
 }
 
 export async function getPhonesByNumber(req: Request, res: Response, next: NextFunction) {
-    const cpf: string = req.params.documet;
+    const cpf: string = req.params.document;
 
     try {
         const result = await getAllPhonesByNumber(cpf);
