@@ -1,6 +1,6 @@
 import { validateSchema } from "../middleware/schema-middleware";
 import { createRecharge, getNewRechargeByPhoneNumber } from "../controllers/recharge-controller";
-import {Router} from "express";
+import { Router } from "express";
 import rechargeSchema from "../schemas/recharge-schema";
 
 const rechargeRouter = Router();

@@ -1,22 +1,20 @@
 import { PhoneData, PhoneResponseData } from "../protocols";
 import db from "../database";
-import { invalidError } from "../errors/error";
 
 export async function insertPhone(clientId: string, carrierId: string, phoneData: PhoneData) {
     const { phone, fullname, description } = phoneData;
 
-    // Insere cada telefone na tabela
-    const insertedPhones = []; // Array para armazenar telefones inseridos
-    for (const phoneNumber of phone) { // Itera sobre cada número de telefone
+    const insertedPhones = [];
+    for (const phoneNumber of phone) {
         const result = await db.query<PhoneData>(`
             INSERT INTO phones (client_id, phone_number, carrier_id, name, description) 
             VALUES ($1, $2, $3, $4, $5)
             RETURNING *
         `, [clientId, phoneNumber, carrierId, fullname, description]);
-        insertedPhones.push(result.rows[0]); // Adiciona o telefone inserido ao array
+        insertedPhones.push(result.rows[0]);
     }
 
-    return insertedPhones; // Retorna todos os telefones inseridos
+    return insertedPhones;
 }
 
 export async function getClientIdByCpf(cpf: string) {
@@ -24,17 +22,16 @@ export async function getClientIdByCpf(cpf: string) {
         SELECT id FROM clients WHERE cpf = $1
     `, [cpf]);
 
-    return result.rows[0].id; // Retorna o id do cliente existente
+    return result.rows.length > 0 ? result.rows[0].id : null;
 }
 
 export async function createClient(cpf: string) {
-     // Se não encontrar, insere um novo cliente
     const insertResult = await db.query(`
-        INSERT INTO clients (cpf)
-        VALUES ($1)
+        INSERT INTO clients (cpf) VALUES ($1)
         RETURNING id
     `, [cpf]);
-    return insertResult.rows[0].id; // Retorna o id do novo cliente
+
+    return insertResult.rows[0].id;
 }
 
 export async function selectCarrier(carrierName: string) {
@@ -43,9 +40,10 @@ export async function selectCarrier(carrierName: string) {
     `, [carrierName]);
 
     if (result.rows.length === 0) {
-        return null; // Retorna null se não encontrar a operadora
+        return null;
     }
-    return result.rows[0].id; // Retorna o ID da operadora encontrada
+
+    return result.rows[0].id;
 }
 
 export async function getNewPhones(phoneData: PhoneData) {
@@ -57,7 +55,6 @@ export async function getNewPhones(phoneData: PhoneData) {
 }
 
 export async function getPhonesByClientId(clientId: string) {
-
     const result = await db.query<PhoneResponseData>(`
             SELECT * FROM phones WHERE client_id = $1
         `, [clientId]);
@@ -66,7 +63,6 @@ export async function getPhonesByClientId(clientId: string) {
 }
 
 export async function phoneExists(phoneNumber: string) {
-
     const result = await db.query<PhoneData>(`
                  SELECT * FROM phones WHERE phone_number = $1
             `, [phoneNumber]);

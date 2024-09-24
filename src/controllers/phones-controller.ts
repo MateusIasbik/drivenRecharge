@@ -6,7 +6,6 @@ import httpStatus from "http-status";
 export async function createPhones(req: Request, res: Response, next: NextFunction) {
     const phoneData: PhoneData = req.body;
     try {
-
         await createPhone(phoneData);
         res.sendStatus(httpStatus.CREATED);
     } catch (error) {
@@ -22,7 +21,7 @@ export async function getPhones(req: Request, res: Response, next: NextFunction)
         const result = await getNewPhone(phoneData);
         res.status(httpStatus.OK).send(result);
     } catch (err) {
-        next(err); // Passa o erro para o middleware de erro
+        next(err);
     }
 }
 

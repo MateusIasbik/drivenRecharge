@@ -4,7 +4,6 @@ import { invalidError } from "../errors/error";
 
 
 export async function postRecharge(rechargeData: RechargeData) {
-
     const exists = await phoneNewExists(rechargeData.phone_id);
     if (!exists) throw invalidError("Telefone");
 
@@ -14,6 +13,6 @@ export async function postRecharge(rechargeData: RechargeData) {
 
 export async function getRechargeByPhoneNumber(numberPhone: string) {
     const result = await getRechargesByPhoneNumber(numberPhone);
-    // values.push(result);
+
     return result;
 }

@@ -16,9 +16,7 @@ export async function createRecharge(req: Request, res: Response, next: NextFunc
 }
 
 export async function getNewRechargeByPhoneNumber(req: Request, res: Response, next: NextFunction) {
-
     const numberPhone: string = req.params.number;
-    // const rechargeData = req.body as RechargeData;
 
     try {
         const recharges = await getRechargeByPhoneNumber(numberPhone);
