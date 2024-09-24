@@ -1,7 +1,7 @@
 import { RechargeData } from "../protocols";
 import db from "../database";
 
-export async function phoneNewExists(phone_id: string) {
+async function phoneNewExists(phone_id: string) {
     const numberId = Number(phone_id);
 
     const result = await db.query(`
@@ -11,7 +11,7 @@ export async function phoneNewExists(phone_id: string) {
     return result.rows.length > 0;
 }
 
-export async function postRecharges(rechargeData: RechargeData) {
+async function postRecharges(rechargeData: RechargeData) {
     const { phone_id, amount } = rechargeData;
 
     const result = await db.query<RechargeData>(`
@@ -23,7 +23,7 @@ export async function postRecharges(rechargeData: RechargeData) {
     return result.rows[0];
 }
 
-export async function getRechargesByPhoneNumber(numberPhone: string) {
+async function getRechargesByPhoneNumber(numberPhone: string) {
     const result = await db.query(`
             SELECT * FROM recharges WHERE phone_id = (SELECT id FROM phones WHERE phone_number = $1)
         `, [numberPhone]);
@@ -32,4 +32,10 @@ export async function getRechargesByPhoneNumber(numberPhone: string) {
 }
 
 
+const rechargesRepository = {
+    phoneNewExists,
+    postRecharges,
+    getRechargesByPhoneNumber
+}
 
+export default rechargesRepository;

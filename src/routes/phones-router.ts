@@ -1,12 +1,12 @@
 import { validateSchema } from "../middleware/schema-middleware";
-import { createPhones, getPhones, getPhonesByNumber } from "../controllers/phones-controller";
+import phonesController from "../controllers/phones-controller";
 import { Router } from "express";
 import phoneSchema from "../schemas/phone-schema";
 
 const phonesRouter = Router();
 
-phonesRouter.post("/phones", validateSchema(phoneSchema), createPhones);
-phonesRouter.get("/phones", getPhones);
-phonesRouter.get("/phones/:document", getPhonesByNumber);
+phonesRouter.post("/phones", validateSchema(phoneSchema), phonesController.insertPhone);
+phonesRouter.get("/phones", phonesController.getPhones);
+phonesRouter.get("/phones/:document", phonesController.getPhonesByClientId);
 
 export default phonesRouter;

@@ -1,7 +1,7 @@
 import { PhoneData, PhoneResponseData } from "../protocols";
 import db from "../database";
 
-export async function insertPhone(clientId: string, carrierId: string, phoneData: PhoneData) {
+async function insertPhone(clientId: string, carrierId: string, phoneData: PhoneData) {
     const { phone, fullname, description } = phoneData;
 
     const insertedPhones = [];
@@ -17,7 +17,7 @@ export async function insertPhone(clientId: string, carrierId: string, phoneData
     return insertedPhones;
 }
 
-export async function getClientIdByCpf(cpf: string) {
+async function getClientIdByCpf(cpf: string) {
     const result = await db.query(`
         SELECT id FROM clients WHERE cpf = $1
     `, [cpf]);
@@ -25,7 +25,7 @@ export async function getClientIdByCpf(cpf: string) {
     return result.rows.length > 0 ? result.rows[0].id : null;
 }
 
-export async function createClient(cpf: string) {
+async function createClient(cpf: string) {
     const insertResult = await db.query(`
         INSERT INTO clients (cpf) VALUES ($1)
         RETURNING id
@@ -34,7 +34,7 @@ export async function createClient(cpf: string) {
     return insertResult.rows[0].id;
 }
 
-export async function selectCarrier(carrierName: string) {
+async function selectCarrier(carrierName: string) {
     const result = await db.query(`
         SELECT id FROM carriers WHERE name = $1
     `, [carrierName]);
@@ -46,7 +46,7 @@ export async function selectCarrier(carrierName: string) {
     return result.rows[0].id;
 }
 
-export async function getNewPhones(phoneData: PhoneData) {
+async function getPhones(phoneData: PhoneData) {
     const result = await db.query<PhoneData>(`
             SELECT * FROM phones;
         `);
@@ -54,7 +54,7 @@ export async function getNewPhones(phoneData: PhoneData) {
     return result.rows;
 }
 
-export async function getPhonesByClientId(clientId: string) {
+async function getPhonesByClientId(clientId: string) {
     const result = await db.query<PhoneResponseData>(`
             SELECT * FROM phones WHERE client_id = $1
         `, [clientId]);
@@ -62,10 +62,22 @@ export async function getPhonesByClientId(clientId: string) {
     return result.rows;
 }
 
-export async function phoneExists(phoneNumber: string) {
+async function phoneExists(phoneNumber: string) {
     const result = await db.query<PhoneData>(`
                  SELECT * FROM phones WHERE phone_number = $1
             `, [phoneNumber]);
 
     return result.rows.length > 0;
 }
+
+const phonesRepository = {
+    insertPhone,
+    getClientIdByCpf,
+    createClient,
+    selectCarrier,
+    getPhones,
+    getPhonesByClientId,
+    phoneExists
+}
+
+export default phonesRepository;

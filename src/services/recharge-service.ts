@@ -1,18 +1,25 @@
-import { getRechargesByPhoneNumber, phoneNewExists, postRecharges } from "../repositories/recharge-repository";
+import rechargesRepository from "../repositories/recharge-repository";
 import { RechargeData } from "../protocols";
 import { invalidError } from "../errors/error";
 
 
-export async function postRecharge(rechargeData: RechargeData) {
-    const exists = await phoneNewExists(rechargeData.phone_id);
+async function postRecharges(rechargeData: RechargeData) {
+    const exists = await rechargesRepository.phoneNewExists(rechargeData.phone_id);
     if (!exists) throw invalidError("Telefone");
 
-    const result = await postRecharges(rechargeData);
+    const result = await rechargesRepository.postRecharges(rechargeData);
     return result;
 }
 
-export async function getRechargeByPhoneNumber(numberPhone: string) {
-    const result = await getRechargesByPhoneNumber(numberPhone);
+async function getRechargesByPhoneNumber(numberPhone: string) {
+    const result = await rechargesRepository.getRechargesByPhoneNumber(numberPhone);
 
     return result;
 }
+
+const rechargesService = {
+    postRecharges,
+    getRechargesByPhoneNumber
+}
+
+export default rechargesService;

@@ -1,27 +1,34 @@
 import { Request, Response, NextFunction } from "express";
 import { RechargeData } from "../protocols";
-import { getRechargeByPhoneNumber, postRecharge } from "../services/recharge-service";
+import rechargesService from "../services/recharge-service";
 import httpStatus from "http-status";
 
-export async function createRecharge(req: Request, res: Response, next: NextFunction) {
+async function postRecharges(req: Request, res: Response, next: NextFunction) {
 
     const rechargeData = req.body as RechargeData;
 
     try {
-        const recharge = await postRecharge(rechargeData);
+        const recharge = await rechargesService.postRecharges(rechargeData);
         res.status(httpStatus.CREATED).send(recharge);
     } catch (err) {
         next(err);
     }
 }
 
-export async function getNewRechargeByPhoneNumber(req: Request, res: Response, next: NextFunction) {
+async function getRechargesByPhoneNumber(req: Request, res: Response, next: NextFunction) {
     const numberPhone: string = req.params.number;
 
     try {
-        const recharges = await getRechargeByPhoneNumber(numberPhone);
+        const recharges = await rechargesService.getRechargesByPhoneNumber(numberPhone);
         res.status(httpStatus.OK).send(recharges);
     } catch (err) {
         next(err);
     }
 }
+
+const rechargesController = {
+    postRecharges,
+    getRechargesByPhoneNumber
+}
+
+export default rechargesController;

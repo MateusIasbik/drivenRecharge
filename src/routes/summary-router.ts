@@ -1,9 +1,8 @@
 import { Router } from "express";
-import { fetchClients, getClientsByCpf } from "../controllers/summary-controller";
+import summaryController from "../controllers/summary-controller";
 
 const summaryRouter = Router();
 
-summaryRouter.get("/summary", fetchClients);
-summaryRouter.get("/summary/:document", getClientsByCpf);
+summaryRouter.get("/summary/:document", summaryController.getInfoClients);
 
 export default summaryRouter;
