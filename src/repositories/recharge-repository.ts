@@ -23,9 +23,17 @@ async function postRecharges(rechargeData: RechargeData) {
     return result.rows[0];
 }
 
-async function getRechargesByPhoneNumber(numberPhone: string) {
+async function getPhoneIdByPhoneNumber(numberPhone: string) {
+    const result = await db.query< {id: string} >(`
+            SELECT id FROM phones WHERE phone_number = $1
+        `, [numberPhone]);
+
+    return result.rows[0].id;
+}
+
+async function getRechargesByPhoneId(numberPhone: string) {
     const result = await db.query<RechargeData>(`
-            SELECT * FROM recharges WHERE phone_id = (SELECT id FROM phones WHERE phone_number = $1)
+            SELECT * FROM recharges WHERE phone_id = $1
         `, [numberPhone]);
 
     return result.rows;
@@ -35,7 +43,8 @@ async function getRechargesByPhoneNumber(numberPhone: string) {
 const rechargesRepository = {
     phoneExists,
     postRecharges,
-    getRechargesByPhoneNumber
+    getRechargesByPhoneId,
+    getPhoneIdByPhoneNumber
 }
 
 export default rechargesRepository;

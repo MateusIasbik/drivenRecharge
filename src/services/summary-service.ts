@@ -1,6 +1,6 @@
 import phonesRepository from "../repositories/phone-repository";
 import { getCarrierByCarrierId } from "../repositories/carriers-repository";
-import rechargesRepository from "../repositories/recharge-repository";
+import rechargesService from "./recharge-service";
 
 async function getInfoClients(cpf: string) {    
     const clientId = await phonesRepository.getClientIdByCpf(cpf);
@@ -8,7 +8,7 @@ async function getInfoClients(cpf: string) {
 
     const phonePromises = phones.map(async (phone) => {
         const carrier = await getCarrierByCarrierId(phone.carrier_id.toString());
-        const recharges = await rechargesRepository.getRechargesByPhoneNumber(phone.phone_number);
+        const recharges = await rechargesService.getRechargesByPhoneNumber(phone.phone_number);
 
         return {
             number: phone.phone_number,

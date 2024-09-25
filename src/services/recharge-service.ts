@@ -12,8 +12,9 @@ async function postRecharges(rechargeData: RechargeData) {
 }
 
 async function getRechargesByPhoneNumber(numberPhone: string) {
-    const result = await rechargesRepository.getRechargesByPhoneNumber(numberPhone);
-
+    const phoneId = await rechargesRepository.getPhoneIdByPhoneNumber(numberPhone);
+    
+    const result = await rechargesRepository.getRechargesByPhoneId(phoneId);
     return result;
 }
 

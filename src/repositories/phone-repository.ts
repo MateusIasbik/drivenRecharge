@@ -27,7 +27,8 @@ async function getClientIdByCpf(cpf: string) {
 
 async function createClient(cpf: string) {
     const insertResult = await db.query<{ id: string }>(`
-        INSERT INTO clients (cpf) VALUES ($1)
+        INSERT INTO clients (cpf) 
+        VALUES ($1)
         RETURNING id
     `, [cpf]);
 
