@@ -6,7 +6,8 @@ export function validateSchema(schema: ObjectSchema) {
     return (req: Request, res: Response, next: NextFunction) => {
         const validation = schema.validate(req.body);
         if(validation.error) {
-            return res.status(httpStatus.UNPROCESSABLE_ENTITY).send(validation.error.details.map(detail => detail.message));
+            const errors = validation.error.details.map(detail => detail.message);
+            return res.status(httpStatus.UNPROCESSABLE_ENTITY).send(errors);
         }
 
         next();

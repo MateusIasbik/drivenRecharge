@@ -7,7 +7,6 @@ async function insertPhone(phoneData: PhoneData) {
 
     if (clientId) {
         const numberPhones = await phonesRepository.getPhonesByClientId(clientId);
-
         if (numberPhones.length >= 3) {
             throw conflictError("Telefone");
         }

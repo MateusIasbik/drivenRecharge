@@ -4,7 +4,7 @@ import { invalidError } from "../errors/error";
 
 
 async function postRecharges(rechargeData: RechargeData) {
-    const exists = await rechargesRepository.phoneNewExists(rechargeData.phone_id);
+    const exists = await rechargesRepository.phoneExists(rechargeData.phone_id);
     if (!exists) throw invalidError("Telefone");
 
     const result = await rechargesRepository.postRecharges(rechargeData);

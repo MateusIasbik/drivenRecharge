@@ -1,10 +1,10 @@
 import { RechargeData } from "../protocols";
 import db from "../database";
 
-async function phoneNewExists(phone_id: string) {
+async function phoneExists(phone_id: string) {
     const numberId = Number(phone_id);
 
-    const result = await db.query(`
+    const result = await db.query< {id: string} >(`
         SELECT * FROM phones WHERE id = $1
     `, [numberId]);
 
@@ -24,7 +24,7 @@ async function postRecharges(rechargeData: RechargeData) {
 }
 
 async function getRechargesByPhoneNumber(numberPhone: string) {
-    const result = await db.query(`
+    const result = await db.query<RechargeData>(`
             SELECT * FROM recharges WHERE phone_id = (SELECT id FROM phones WHERE phone_number = $1)
         `, [numberPhone]);
 
@@ -33,7 +33,7 @@ async function getRechargesByPhoneNumber(numberPhone: string) {
 
 
 const rechargesRepository = {
-    phoneNewExists,
+    phoneExists,
     postRecharges,
     getRechargesByPhoneNumber
 }

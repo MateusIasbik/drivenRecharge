@@ -5,13 +5,13 @@ import httpStatus from "http-status";
 
 async function insertPhone(req: Request, res: Response, next: NextFunction) {
     const phoneData: PhoneData = req.body;
+    
     try {
         await phonesService.insertPhone(phoneData);
         res.sendStatus(httpStatus.CREATED);
     } catch (error) {
         next(error);
     }
-
 }
 
 async function getPhones(req: Request, res: Response, next: NextFunction) {

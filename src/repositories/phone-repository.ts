@@ -18,7 +18,7 @@ async function insertPhone(clientId: string, carrierId: string, phoneData: Phone
 }
 
 async function getClientIdByCpf(cpf: string) {
-    const result = await db.query(`
+    const result = await db.query< {id: string} >(`
         SELECT id FROM clients WHERE cpf = $1
     `, [cpf]);
 
@@ -26,7 +26,7 @@ async function getClientIdByCpf(cpf: string) {
 }
 
 async function createClient(cpf: string) {
-    const insertResult = await db.query(`
+    const insertResult = await db.query<{ id: string }>(`
         INSERT INTO clients (cpf) VALUES ($1)
         RETURNING id
     `, [cpf]);
@@ -35,7 +35,7 @@ async function createClient(cpf: string) {
 }
 
 async function selectCarrier(carrierName: string) {
-    const result = await db.query(`
+    const result = await db.query<{ id: string }>(`
         SELECT id FROM carriers WHERE name = $1
     `, [carrierName]);
 
