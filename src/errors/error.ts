@@ -1,7 +1,7 @@
 export function conflictError(entity: string) {
     return {
         type: "conflict",
-        message: `Há conflito com este ${entity}!`
+        message: `${entity} já existe ou usuário já possui 3 telefones cadastrados!`
     }
 }
 
