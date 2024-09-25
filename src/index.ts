@@ -17,4 +17,5 @@ app.use(rechargeRouter);
 
 app.use(errorHandler);
 
-app.listen(5550, () => console.log("Server is up."));
+const port = process.env.PORT || 5550;
+app.listen(port, () => console.log("Server is up."));
