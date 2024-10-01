@@ -15,13 +15,5 @@ export default function errorHandler(err: CustomError, req: Request, res: Respon
         return res.status(httpStatus.CONFLICT).send(err.message);
     }
 
-    if (err.type === "invalidStock") {
-        return res.status(httpStatus.UNPROCESSABLE_ENTITY).send(err.message);
-    }
-
-    if (err.type === "RentNotFinalized") {
-        return res.status(httpStatus.UNPROCESSABLE_ENTITY).send(err.message);
-    }
-
     res.status(httpStatus.INTERNAL_SERVER_ERROR).send(err.message);
 }
